@@ -1,6 +1,6 @@
 import openai 
 
-openai.api_key = "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" #this is my api key
+openai.api_key = "[YOUR GPT API]" #this is my api key
 
 history = []
 

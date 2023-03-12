@@ -11,3 +11,94 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-family: "Lato", sans-serif;
+}
+
+*:focus {
+  outline: none;
+}
+
+ul {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+/* NavBar */
+
+.navbar {
+  background-color: #202123;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 14px 0;
+}
+
+.navbar-items li {
+  margin-bottom: 20px;
+}
+
+.item-new-chat {
+  border: 1px solid #d9d9e3;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.item-new-chat a {
+  display: flex;
+  align-items: center;
+  font-weight: 900;
+}
+
+.item-new-chat a svg {
+  margin-right: 12px;
+}
+
+/* Content  */
+
+.content {
+  height: 100vh;
+  overflow-y: scroll;
+  background-color: #2f3237;
+  color: white;
+  padding-left: 14px;
+}
+
+.card h3 {
+  font-weight: 900 !important;
+}
+
+.card p {
+  font-weight: 100;
+}
+
+.home {
+  display: flex;
+  height: 98vh;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.home form {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+}
+
+form input {
+  padding: 20px;
+}

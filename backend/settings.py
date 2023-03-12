@@ -1,6 +1,7 @@
 import os
 import environ
 from pathlib import Path
+from decouple import config
 
 env = environ.Env()
 environ.Env.read_env()
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ckeditor',
     'ckeditor_uploader',
+    'apps.chatbot',
 ]
 
 CKEDITOR_CONFIGS = {
@@ -151,10 +153,17 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend/build/static')]
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+OPEN_API_KEY = config('OPEN_API_KEY', default='')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 16,

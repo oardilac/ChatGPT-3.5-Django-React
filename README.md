@@ -1,4 +1,4 @@
-Chatbot with GPT-3.5 Turbo and Document Analysis
+# Chatbot with GPT-3.5 Turbo and Document Analysis
 
 This is a chatbot that connects to the GPT chat API and uses the GPT-3.5 Turbo model to read, understand, analyze, and modify documents. The chatbot is built with a Django backend that provides a REST API for communication with the GPT chat API and a React frontend built with Next.js for a seamless user experience.
 

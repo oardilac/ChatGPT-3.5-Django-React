@@ -132,3 +132,4 @@ pytest_cache/
 # FastAPI
 __pycache__/
 app/main.py
+chatmine.json

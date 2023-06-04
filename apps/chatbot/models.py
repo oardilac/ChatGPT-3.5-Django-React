@@ -1,15 +1,11 @@
 from django.db import models
 from django.utils import timezone
 import openai
-import redis
 import json
 
 # Create your models here.
 API_KEY = ""
 openai.api_key = API_KEY
-
-# Connect to the Redis server
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 # model AIPost
 class AIPost(models.Model):

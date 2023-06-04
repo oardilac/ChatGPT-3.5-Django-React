@@ -5,6 +5,7 @@ from google.auth import exceptions
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
+from .utils import SERVICE_ACCOUNT_KEY_PATH
 import os
 import chardet
 import firebase_admin
@@ -16,7 +17,6 @@ from django.shortcuts import render
 from django.views import View
 
 # Load environment variables
-SERVICE_ACCOUNT_KEY_PATH = 'D:\Oliver\django\ChatGPT-3.5-Django-React\chatmine.json'
 cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
 default_app = firebase_admin.initialize_app(cred)
 db = firestore.client()
@@ -88,14 +88,17 @@ class upload_file(View):
                     'modification_time': file_modification_time,
                 })
 
-                results.append(File(  # use your Django model for the response
+                new_file = File(
                     filename=file.name,
                     location=blob.public_url,
                     file_type=file_type,
                     file_size=file_size,
                     file_encoding=file_encoding,
                     modification_time=file_modification_time
-                ))
+                )
+                new_file.save()
+
+                results.append(new_file)
                 
             except Exception as e:
                 errors.append({"filename": filename, "error": str(e)})

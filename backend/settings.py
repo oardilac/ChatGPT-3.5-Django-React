@@ -1,5 +1,5 @@
 import os
-import environ
+from decouple import config
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
@@ -7,17 +7,13 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-env = environ.Env()
-environ.Env.read_env()
-
-ENVIRONMENT = env
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
-SERVICE_ACCOUNT_KEY_PATH = os.path.join(BASE_DIR, 'chatmine-388722-0c3beda433d5.json')
-OPEN_API_KEY = os.environ.get('OPEN_API_KEY')
+OPEN_API_KEY = config('OPEN_API_KEY')
+SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,8 +23,8 @@ OPEN_API_KEY = os.environ.get('OPEN_API_KEY')
 SECRET_KEY = 'django-insecure-hn4n#g13mo=-xz=bbd2s!5386l$-p($#007sd*6t)u8%h$cp+n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=["localhost", "127.0.0.1"])
+DEBUG = config('DEBUG', default=True)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default="localhost,127.0.0.1").split(',')
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:

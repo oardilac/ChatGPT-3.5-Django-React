@@ -18,10 +18,10 @@
         <div class="container d-flex justify-content-center">
           <ul class="nav nav-pills nav-fill">
             <li class="nav-item box">
-              <a class="nav-link" href="/init">Archivos</a>
+              <a class="nav-link" href="/init/">Archivos</a>
             </li>
             <li class="nav-item box">
-              <a class="nav-link" href="/text">Texto</a>
+              <a class="nav-link" href="/init/text/">Texto</a>
             </li>
             <li class="nav-item box">
               <a class="nav-link" href="/sitio-web">Sitio Web</a>
@@ -31,8 +31,9 @@
             </li>
           </ul>
         </div>
-        <form id="texto-form" action="/text" method="post">
-            <label for="fname">Nombre del chatbot:</label><br>
+        <form id="texto-form" action="/init/text/" method="post">
+          {% csrf_token %}  
+          <label for="fname">Nombre del chatbot:</label><br>
             <input type="text" id="fname" name="fname" class="small-input"><br>
             <label for="lname">Dato:</label><br>
             <input type="text" id="lname" name="lname" class="large-input"><br><br>

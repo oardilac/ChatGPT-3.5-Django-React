@@ -45,7 +45,6 @@ To get started with the project, follow these steps:
 
 ## Contributors
 - [Oliver Ardila](https://github.com/oardilac)
-- [Sebastian Escobar](https://github.com/YummySalamy)
 
 ## License
 This project is licensed under the MIT License - see the `LICENSE` file for details.

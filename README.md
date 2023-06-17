@@ -126,7 +126,7 @@ To interact with the backend:
 - To save a URL, make a POST request to `http://127.0.0.1:8000/chatbots/saveurl/`.
 - To scrape a sitemap, make a POST request to `http://127.0.0.1:8000/chatbots/scrapesitemap/`.
 
-_For more examples, please refer to the [API Documentation](https://example.com)_
+_For more examples, please refer to the [API Documentation](https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/redoc/)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -1,4 +1,13 @@
 from django.db import models
+from datetime import datetime
+
+class Chatbot(models.Model):
+    chatbot_name = models.CharField(max_length=200)
+    state_deployed = models.CharField(max_length=200)
+    active_state = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.chatbot_name
 
 class BaseFile(models.Model):
     filename = models.CharField(max_length=255)
@@ -11,9 +20,18 @@ class BaseFile(models.Model):
     class Meta:
         abstract = True
 
-class File(BaseFile):
+    def __str__(self):
+        return self.filename
+
+class SubmitFiles(BaseFile):
     pass
 
-class TextFile(BaseFile):
-    tokens = models.IntegerField()
-    characters = models.IntegerField()
+class RequestModelTexto(models.Model):
+    fname = models.CharField(max_length=100)
+    lname = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'{self.fname} {self.lname}'
+
+class Url(models.Model):
+    url = models.URLField(max_length=200)

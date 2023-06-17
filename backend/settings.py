@@ -12,7 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 OPEN_API_KEY = config('OPEN_API_KEY')
-SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
 
 
 
@@ -43,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'ckeditor',
     'ckeditor_uploader',
-    'apps.chatbot',
     'apps.upload',
     'coreapi',
     'rest_framework_simplejwt',
@@ -79,6 +77,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True  # Equivalent to FastAPI's allow_origins=["*"]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ["*"]
+CORS_ALLOW_HEADERS = ["*"]
+
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -105,8 +109,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -155,13 +163,12 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend/build/static').replace('\\', '/')]
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -214,11 +221,11 @@ EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 if not DEBUG:
     DEFAULT_FROM_EMAIL="Uridium <mail@uridium.network>"
     EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = env('EMAIL_HOST')
-    EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-    EMAIL_PORT = env('EMAIL_PORT')
-    EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+    EMAIL_HOST = config('EMAIL_HOST')
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+    EMAIL_PORT = config('EMAIL_PORT')
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 
 
 SIMPLE_JWT = {
@@ -245,4 +252,15 @@ SIMPLE_JWT = {
    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+SWAGGER_SETTINGS = {
+    "DEFAULT_INFO": openapi.Info(
+        title="My API",
+        default_version="v1",
+        description="My API description",
+        terms_of_service="https://www.my-api.com/terms/",
+        contact=openapi.Contact(email="contact@my-api.com"),
+        license=openapi.License(name="My API License"),
+    )
 }

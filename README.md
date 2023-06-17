@@ -118,7 +118,12 @@ pip install django
 
 This Django backend provides several API endpoints for managing the personalized ChatGPT instance, including endpoints for uploading files, storing text, saving URLs, and scraping sitemaps.
 
+<<<<<<< HEAD
 In order to run the backend server, you need to:
+=======
+## Contributors
+- [Oliver Ardila](https://github.com/oardilac)
+>>>>>>> 7862e5c3d6643f5de67bb785ac7921125209b5e5
 
 1. Clone this repository
 2. Set up a Python virtual environment and install the dependencies listed in the `requirements.txt` file.
@@ -171,6 +176,7 @@ Don't forget to give the project a star! Thanks again!
 
 <!-- LICENSE -->
 ## License
+<<<<<<< HEAD
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -208,3 +214,6 @@ Other resources that were instrumental in the success of this project include:
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+=======
+This project is licensed under the MIT License - see the `LICENSE` file for details.
+>>>>>>> 7862e5c3d6643f5de67bb785ac7921125209b5e5

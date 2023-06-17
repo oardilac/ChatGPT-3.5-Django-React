@@ -56,12 +56,7 @@ AI-powered chatbot with GPT-3.5 Turbo model for document analysis, modification,
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-There are many great README templates available on GitHub; however, this project deserved a custom one. This backend application is built for the personalized ChatGPT model, a powerful conversational AI model, enhanced with Django and React. The main purpose of this project is:
-
-* To provide a robust backend for managing and interacting with a personalized instance of ChatGPT.
-* To implement the principles of DRY ("Don't Repeat Yourself") to the fullest extent, allowing us to focus on creating an innovative and useful service.
-
-Of course, the needs of every project are different. If you have any suggestions or improvements, feel free to contribute to this project by creating a pull request or opening an issue.
+This project is a backend service for a web application powered by ChatGPT and developed using Django and React. The backend service is designed to support various functionalities like handling chatbots, managing document uploads, storing text data, saving URLs, and web scraping.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -118,12 +113,7 @@ pip install django
 
 This Django backend provides several API endpoints for managing the personalized ChatGPT instance, including endpoints for uploading files, storing text, saving URLs, and scraping sitemaps.
 
-<<<<<<< HEAD
 In order to run the backend server, you need to:
-=======
-## Contributors
-- [Oliver Ardila](https://github.com/oardilac)
->>>>>>> 7862e5c3d6643f5de67bb785ac7921125209b5e5
 
 1. Clone this repository
 2. Set up a Python virtual environment and install the dependencies listed in the `requirements.txt` file.
@@ -176,7 +166,6 @@ Don't forget to give the project a star! Thanks again!
 
 <!-- LICENSE -->
 ## License
-<<<<<<< HEAD
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -214,6 +203,3 @@ Other resources that were instrumental in the success of this project include:
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-=======
-This project is licensed under the MIT License - see the `LICENSE` file for details.
->>>>>>> 7862e5c3d6643f5de67bb785ac7921125209b5e5

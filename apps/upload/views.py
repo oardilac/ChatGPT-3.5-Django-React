@@ -24,7 +24,7 @@ from rest_framework.pagination import PageNumberPagination
 logger = logging.getLogger(__name__)
 
 cred = credentials.ApplicationDefault()
-db = firestore.Client()
+db = firestore.Client(project='ChatMine')
 client = storage.Client()
 bucket_name = config("BUCKET_NAME", default=None)
 

@@ -19,7 +19,7 @@ COPY manage.py /app/
 COPY .env /app/
 
 # collect static files
-RUN python manage.py collectstatic --noinput
+# RUN python manage.py collectstatic --noinput
 
 # make migrations and migrate the database. 
 # NOTE: this is not recommended in production. 

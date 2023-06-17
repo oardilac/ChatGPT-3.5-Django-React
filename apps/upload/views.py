@@ -25,7 +25,14 @@ logger = logging.getLogger(__name__)
 
 cred = credentials.ApplicationDefault()
 db = firestore.Client(project='ChatMine')
-client = storage.Client()
+from google.cloud import storage
+
+def get_storage_client():
+    try:
+        return storage.Client()
+    except Exception as e:
+        return None, str(e)
+client = get_storage_client()
 bucket_name = config("BUCKET_NAME", default=None)
 
 # Defining the allowed extensions for files to be uploaded

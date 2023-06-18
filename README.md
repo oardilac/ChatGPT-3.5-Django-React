@@ -121,10 +121,10 @@ In order to run the backend server, you need to:
 
 To interact with the backend:
 
-- To create a chatbot, make a POST request to `http://127.0.0.1:8000/chatbots/chatbots/`.
-- To upload files, make a POST request to `http://127.0.0.1:8000/chatbots/uploadfiles/`.
-- To save a URL, make a POST request to `http://127.0.0.1:8000/chatbots/saveurl/`.
-- To scrape a sitemap, make a POST request to `http://127.0.0.1:8000/chatbots/scrapesitemap/`.
+- To create a chatbot, make a POST request to `https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/chatbots/chatbots/`.
+- To upload files, make a POST request to `https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/chatbots/uploadfiles/`.
+- To save a URL, make a POST request to `https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/chatbots/saveurl/`.
+- To scrape a sitemap, make a POST request to `https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/chatbots/scrapesitemap/`.
 
 _For more examples, please refer to the [API Documentation](https://chatgpt-3-5-django-react-ywtk7siozq-wn.a.run.app/redoc/)_
 

@@ -19,12 +19,12 @@ COPY manage.py /app/
 COPY .env /app/
 
 # collect static files
-# RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
-# make migrations and migrate the database. 
-# NOTE: this is not recommended in production. 
-# In production, migrations should be part of deployment process.
-RUN python manage.py makemigrations && python manage.py migrate
+ENV DJANGO_SETTINGS_MODULE=backend.settings.production
+
+# Expose the port that your app runs on
+EXPOSE 8000
 
 # Run the application:
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD exec gunicorn backend.wsgi:application --bind :$PORT --workers 1 --threads 8 --timeout 0

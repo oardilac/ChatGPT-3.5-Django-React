@@ -22,8 +22,8 @@ from rest_framework.pagination import PageNumberPagination
 
 
 logger = logging.getLogger(__name__)
-
-cred = credentials.ApplicationDefault()
+SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
+cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
 db = firestore.Client(project='ChatMine')
 from google.cloud import storage
 

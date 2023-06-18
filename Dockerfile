@@ -18,8 +18,11 @@ COPY backend /app/backend
 COPY manage.py /app/
 COPY .env /app/
 
-ENV DJANGO_SETTINGS_MODULE=backend.settings.production
+RUN python manage.py collectstatic --no-input
 
+RUN python manage.py makemigrations && RUN python manage.py migrate
+
+ENV DJANGO_SETTINGS_MODULE=backend.settings
 ENV PORT=8000
 EXPOSE $PORT
 

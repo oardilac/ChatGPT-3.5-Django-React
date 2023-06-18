@@ -18,9 +18,6 @@ COPY backend /app/backend
 COPY manage.py /app/
 COPY .env /app/
 
-# collect static files
-RUN python manage.py collectstatic --noinput
-
 ENV DJANGO_SETTINGS_MODULE=backend.settings.production
 
 # Run the application:

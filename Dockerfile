@@ -1,5 +1,5 @@
 # Pull the official base image
-FROM python:3.10-buster
+FROM python:3.10-slim
 
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -20,5 +20,8 @@ COPY .env /app/
 
 ENV DJANGO_SETTINGS_MODULE=backend.settings.production
 
+ENV PORT=8000
+EXPOSE $PORT
+
 # Run the application:
-CMD exec gunicorn backend.wsgi:application --bind :$PORT --workers 1 --threads 8 --timeout 0
+CMD exec gunicorn backend.wsgi:application --bind 0.0.0.0:${PORT} --workers 1 --threads 8 --timeout 0

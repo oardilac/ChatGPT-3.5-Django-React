@@ -121,6 +121,9 @@ class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
         file_serializer = SubmitFilesSerializer(data=request.data)
 
+        if not uploaded_files:
+            return Response({'files': ['No files to upload.']}, status=status.HTTP_400_BAD_REQUEST)
+
         if file_serializer.is_valid():
             uploaded_files = request.FILES.getlist('files')
             bucket = client.get_bucket(bucket_name)

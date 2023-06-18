@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 OPEN_API_KEY = config('OPEN_API_KEY')
 
+DJANGO_RUNSERVER_PORT = config("PORT", default=8000)
 
 
 # Quick-start development settings - unsuitable for production

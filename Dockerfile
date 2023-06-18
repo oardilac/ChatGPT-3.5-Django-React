@@ -25,8 +25,5 @@ RUN python manage.py collectstatic --noinput
 
 ENV DJANGO_SETTINGS_MODULE=backend.settings.production
 
-# Expose the port that your app runs on
-EXPOSE 8000
-
 # Run the application:
-CMD exec gunicorn backend.wsgi:application --bind :$PORT --workers 1 --threads 8 --timeout 0
+CMD exec gunicorn backend.wsgi:application --bind :$DJANGO_RUNSERVER_PORT --workers 1 --threads 8 --timeout 0

@@ -1,6 +1,8 @@
 # Pull the official base image
 FROM python:3.10-buster
 
+ENV GOOGLE_ENTRYPOINT gunicorn -b :$PORT backend.wsgi
+
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1

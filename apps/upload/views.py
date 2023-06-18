@@ -22,6 +22,8 @@ from rest_framework.pagination import PageNumberPagination
 
 
 logger = logging.getLogger(__name__)
+SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
+cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
 cred = credentials.ApplicationDefault()
 db = firestore.Client(project='ChatMine')
 from google.cloud import storage
@@ -121,12 +123,12 @@ class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
         file_serializer = SubmitFilesSerializer(data=request.data)
 
-        if not uploaded_files:
-            return Response({'files': ['No files to upload.']}, status=status.HTTP_400_BAD_REQUEST)
-
         if file_serializer.is_valid():
             uploaded_files = request.FILES.getlist('files')
             bucket = client.get_bucket(bucket_name)
+
+            if not uploaded_files:
+                return Response({'files': ['No files to upload.']}, status=status.HTTP_400_BAD_REQUEST)
 
             results = []
             errors = []

@@ -23,7 +23,7 @@ DJANGO_RUNSERVER_PORT = config("PORT", default=8000)
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True)
+DEBUG = config('DEBUG', default=False)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=["*"])
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')

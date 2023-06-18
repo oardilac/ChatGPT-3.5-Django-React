@@ -115,6 +115,9 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='3306'),
+        'OPTIONS': {
+            'read_default_file': 'my.cnf',
+        },
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True

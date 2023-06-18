@@ -1,8 +1,6 @@
 # Pull the official base image
 FROM python:3.10-buster
 
-ENV GOOGLE_ENTRYPOINT gunicorn -b :$PORT backend.wsgi
-
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -26,4 +24,4 @@ RUN python manage.py collectstatic --noinput
 ENV DJANGO_SETTINGS_MODULE=backend.settings.production
 
 # Run the application:
-CMD exec gunicorn backend.wsgi:application --bind :$DJANGO_RUNSERVER_PORT --workers 1 --threads 8 --timeout 0
+CMD exec gunicorn backend.wsgi:application --bind :$PORT --workers 1 --threads 8 --timeout 0

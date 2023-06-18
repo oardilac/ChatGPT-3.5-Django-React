@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Chatbot, SubmitFiles, RequestModelTexto
-from .serializers import ChatbotSerializer, SubmitFilesSerializer, RequestModelTextoSerializer, UrlSerializer
+from .models import User, Chatbot, SubmitFiles, RequestModelTexto, Url
+from .serializers import UserSerializer, ChatbotSerializer, SubmitFilesSerializer, RequestModelTextoSerializer, UrlSerializer
 from google.cloud import firestore, storage
 from firebase_admin import credentials
 from django.views.decorators.csrf import csrf_exempt
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
 cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
 cred = credentials.ApplicationDefault()
-db = firestore.Client(project='ChatMine')
+db = firestore.Client(project='chatmine-388722')
 from google.cloud import storage
 
 def get_storage_client():
@@ -42,6 +42,15 @@ ALLOWED_EXTENSIONS = ['.csv', '.txt', '.pdf', '.xlsx']
 # Function to get the filename from a given url
 def get_filename_from_url(url: str):
     return quote(url, safe='')
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CreateUserView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # This view handles the creation of a chatbot instance in the database
 @method_decorator(csrf_exempt, name='dispatch')
@@ -121,63 +130,74 @@ class FileUploadView(APIView):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        file_serializer = SubmitFilesSerializer(data=request.data)
+        user_id = request.data.get('user')
+        chatbot_id = request.data.get('chatbot')
+        user = User.objects.get(id=user_id)
+        chatbot = Chatbot.objects.get(id=chatbot_id)
+        uploaded_files = request.FILES.getlist('files')
+        bucket = client.get_bucket(bucket_name)
 
-        if file_serializer.is_valid():
-            uploaded_files = request.FILES.getlist('files')
-            bucket = client.get_bucket(bucket_name)
+        if not uploaded_files:
+            return Response({'files': ['No files to upload.']}, status=status.HTTP_400_BAD_REQUEST)
 
-            if not uploaded_files:
-                return Response({'files': ['No files to upload.']}, status=status.HTTP_400_BAD_REQUEST)
+        results = []
+        errors = []
 
-            results = []
-            errors = []
+        for file in uploaded_files:
+            filename = os.path.basename(file.name)
+            file_type = os.path.splitext(filename)[1]
 
-            for file in uploaded_files:
-                filename = os.path.basename(file.name)
-                file_type = os.path.splitext(filename)[1]
+            if file_type not in ALLOWED_EXTENSIONS:
+                errors.append({
+                    "filename": filename,
+                    "error": f"El archivo no es uno de los solicitados: {', '.join(ALLOWED_EXTENSIONS)}"
+                })
+                continue
 
-                if file_type not in ALLOWED_EXTENSIONS:
-                    errors.append({
-                        "filename": filename,
-                        "error": f"El archivo no es uno de los solicitados: {', '.join(ALLOWED_EXTENSIONS)}"
-                    })
+            try:
+                contents = file.read()  # Read the file
+
+                # If the file is empty, sets the content to an empty utf-8 string
+                if len(contents) == 0:
+                    errors.append({"filename": filename, "error": f"El archivo {file.name} se encuentra vacío"})
                     continue
 
-                try:
-                    contents = file.read()  # Read the file
+                # Save the file to the bucket
+                blob = bucket.blob(filename)
+                blob.upload_from_string(contents)
 
-                    # If the file is empty, sets the content to an empty utf-8 string
-                    if len(contents) == 0:
-                        errors.append({"filename": filename, "error": f"El archivo {file.name} se encuentra vacío"})
-                        continue
+                # Get the file metadata
+                file_size = blob.size
+                file_encoding = chardet.detect(contents)['encoding'] if file_type in ['csv', 'txt'] else 'binary'
 
-                    # Save the file to the bucket
-                    blob = bucket.blob(filename)
-                    blob.upload_from_string(contents)
+                # Creas el diccionario con los datos del archivo
+                file_data = {
+                    'filename': file.name,
+                    'location': blob.public_url,
+                    'file_type': file_type,
+                    'file_size': file_size,
+                    'file_encoding': file_encoding,
+                }
 
-                    # Get the file metadata
-                    file_size = blob.size
-                    file_encoding = chardet.detect(contents)['encoding'] if file_type in ['csv', 'txt'] else 'binary'
+                # Creas la instancia del serializer con los datos del archivo
+                file_serializer = SubmitFilesSerializer(data=file_data)
 
-                    new_file = SubmitFiles(
-                        filename=file.name,
-                        location=blob.public_url,
-                        file_type=file_type,
-                        file_size=file_size,
-                        file_encoding=file_encoding,
-                    )
-                    new_file.save()
-
+                # Validas y guardas los datos
+                if file_serializer.is_valid():
+                    new_file = file_serializer.save()
                     results.append(new_file)
+                else:
+                    errors.append({"filename": filename, "error": f"Unexpected error occurred: {file_serializer.errors}"})
 
-                except Exception as e:
-                    logger.exception("Error while uploading file: %s", e)
-                    errors.append({"filename": filename, "error": f"Unexpected error occurred: {str(e)}"})
-                
-            return JsonResponse({"uploaded": [file.to_json() for file in results], "errors": errors})
-        else:
-            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                logger.exception("Error while uploading file: %s", e)
+                errors.append({"filename": filename, "error": f"Unexpected error occurred: {str(e)}"})
+        
+        return JsonResponse({
+            "uploaded": [SubmitFilesSerializer(file).data for file in results], 
+            "errors": errors
+        })
+
 
 # This view handles the storage of text data
 @method_decorator(csrf_exempt, name='dispatch')

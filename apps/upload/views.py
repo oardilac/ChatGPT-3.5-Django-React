@@ -51,7 +51,7 @@ class CreateChatbotView(APIView):
             chatbot_name = serializer.validated_data['chatbot_name']
             state_deployed = serializer.validated_data['state_deployed']
             active_state = serializer.validated_data['active_state']
-            
+
             doc_ref = db.collection('Chatbots').document()
             doc_ref.set({
                 'chatbot_name': chatbot_name,

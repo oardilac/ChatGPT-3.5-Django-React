@@ -170,6 +170,7 @@ class FileUploadView(APIView):
                     'file_type': file_type,
                     'file_size': file_size,
                     'file_encoding': file_encoding,
+                    'file_modification_time': file_modification_time
                 }
 
                 # Creas la instancia del serializer con los datos del archivo
@@ -177,8 +178,7 @@ class FileUploadView(APIView):
 
                 # Validas y guardas los datos
                 if file_serializer.is_valid():
-                    new_file = file_serializer.save()
-                    results.append(new_file)
+                    results.append(file_serializer)
                 else:
                     errors.append({"filename": filename, "error": f"Unexpected error occurred: {file_serializer.errors}"})
 

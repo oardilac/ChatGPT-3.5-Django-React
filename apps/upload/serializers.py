@@ -10,13 +10,14 @@ class ChatbotSerializer(serializers.ModelSerializer):
         model = Chatbot
         fields = ['chatbot_name', 'state_deployed', 'active_state']
 
-class SubmitFilesSerializer(serializers.ModelSerializer):
+class SubmitFilesSerializer(serializers.Serializer):
     filename = serializers.CharField(max_length=255)
     file_type = serializers.ChoiceField(choices=['.csv', '.txt', '.pdf', '.xlsx'])
+    location = serializers.URLField(max_length=200)
+    file_size = serializers.IntegerField()
+    file_encoding = serializers.CharField(max_length=50)
+    modification_time = serializers.DateTimeField()
 
-    class Meta:
-        model = SubmitFiles
-        fields = ['filename', 'location', 'file_type', 'file_size', 'file_encoding', 'modification_time']
 
 class RequestModelTextoSerializer(serializers.ModelSerializer):
     fname = serializers.CharField(max_length=100)

@@ -7,12 +7,10 @@ from .views import (
     StoreTextoView,
     SaveUrlView,
     ScrapeSitemapView,
-    CreateUserView
 )
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    path('user/', CreateUserView.as_view(), name='user'),
     path('chatbots/', CreateChatbotView.as_view(), name='chatbot'),
     path('documents/<str:doc_id>/', DocumentView.as_view(), name='document'),
     path('documents/', DocumentListView.as_view(), name='documents'),

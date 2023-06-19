@@ -26,7 +26,6 @@ from rest_framework.pagination import PageNumberPagination
 logger = logging.getLogger(__name__)
 cred = credentials.ApplicationDefault()
 db = firestore.Client(project='chatmine-388722')
-from google.cloud import storage
 
 def get_storage_client():
     try:
@@ -42,15 +41,6 @@ ALLOWED_EXTENSIONS = ['.csv', '.txt', '.pdf', '.xlsx']
 # Function to get the filename from a given url
 def get_filename_from_url(url: str):
     return quote(url, safe='')
-
-@method_decorator(csrf_exempt, name='dispatch')
-class CreateUserView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # This view handles the creation of a chatbot instance in the database
 @method_decorator(csrf_exempt, name='dispatch')
@@ -129,18 +119,7 @@ class DocumentListView(APIView):
 class FileUploadView(APIView):
 
     @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        user_id = request.data.get('user')
-        chatbot_id = request.data.get('chatbot')
-        user = get_object_or_404(User, id=user_id)
-        chatbot = get_object_or_404(Chatbot, id=chatbot_id)
-
-        try:
-            user = User.objects.get(id=user_id)
-            chatbot = Chatbot.objects.get(id=chatbot_id)
-        except ObjectDoesNotExist:
-            return Response({"error": "User or Chatbot not found"}, status=status.HTTP_400_BAD_REQUEST)
-                    
+    def post(self, request, *args, **kwargs):     
         uploaded_files = request.FILES.getlist('files')
         bucket = client.get_bucket(bucket_name)
 
@@ -179,8 +158,6 @@ class FileUploadView(APIView):
                 file_modification_time = blob.updated
                 doc_ref = db.collection('datafile').document()
                 doc_ref.set({
-                    'user': user.id,
-                    'chatbot': chatbot.id,
                     'filename': file.name,
                     'location': blob.public_url,
                     'file_type': file_type,
@@ -190,8 +167,6 @@ class FileUploadView(APIView):
                 })
                 # Creas el diccionario con los datos del archivo
                 file_data = {
-                    'user': user.id,
-                    'chatbot': chatbot.id,
                     'filename': file.name,
                     'location': blob.public_url,
                     'file_type': file_type,
@@ -233,8 +208,6 @@ class StoreTextoView(APIView):
 
             fname = payload.fname
             lname = payload.lname
-            user_id = payload.user_id  # Get user_id from the data
-            chatbot_id = payload.chatbot_id
             timestamp = datetime.now().strftime("%Y%m%d%H%M%S")  # Generate a unique timestamp
             filename = f"data_{timestamp}.txt"  # Add a timestamp to the filename
             bucket = client.get_bucket(bucket_name)
@@ -257,8 +230,6 @@ class StoreTextoView(APIView):
 
             doc_ref = db.collection('datafile').document()
             doc_ref.set({
-                'user_id': user_id,
-                'chatbot_id': chatbot_id,
                 'filename': filename,
                 'location': blob.public_url,
                 'file_type': file_type,
@@ -282,11 +253,8 @@ class SaveUrlView(APIView):
         serializer = UrlSerializer(data=request.data)
         if serializer.is_valid():
             url = serializer.validated_data.get('url')
-            chatbot_id = serializer.validated_data.get('chatbot_id')
-            user_id = serializer.validated_data.get('user_id')
-
-            if url is None or chatbot_id is None or user_id is None:
-                return Response({"error": "url, chatbot_id, and user_id fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+            if url is None:
+                return Response({"error": "url fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
                 response = requests.get(url)
@@ -311,8 +279,6 @@ class SaveUrlView(APIView):
             
             doc_ref = db.collection('datafile').document()
             doc_ref.set({
-                'user_id': user_id,
-                'chatbot_id': chatbot_id,
                 'filename': filename,
                 'location': url,
                 'file_size': file_size,

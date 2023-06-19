@@ -46,12 +46,11 @@ class CreateChatbotView(APIView):
 
     @transaction.atomic
     def post(self, request):
-        serializer = ChatbotSerializer(data=request.data)
-        if serializer.is_valid():
-            chatbot_name = serializer.validated_data['chatbot_name']
-            state_deployed = serializer.validated_data['state_deployed']
-            active_state = serializer.validated_data['active_state']
+        chatbot_name = request.data.get('chatbot_name')
+        state_deployed = request.data.get('state_deployed')
+        active_state = request.data.get('active_state')
 
+        if chatbot_name and state_deployed and active_state is not None:
             doc_ref = db.collection('Chatbots').document()
             doc_ref.set({
                 'chatbot_name': chatbot_name,
@@ -59,10 +58,10 @@ class CreateChatbotView(APIView):
                 'active_state': active_state
             })
 
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"status": "Chatbot created successfully"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid data received"}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 # This view retrieves a document from the 'datafile' collection
 @method_decorator(csrf_exempt, name='dispatch')

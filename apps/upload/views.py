@@ -178,7 +178,7 @@ class FileUploadView(APIView):
 
                 # Validas y guardas los datos
                 if file_serializer.is_valid():
-                    results.append(file_serializer)
+                    results.append(file_serializer.validated_data)
                 else:
                     errors.append({"filename": filename, "error": f"Unexpected error occurred: {file_serializer.errors}"})
 

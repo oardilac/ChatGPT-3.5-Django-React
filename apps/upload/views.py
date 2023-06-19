@@ -161,7 +161,7 @@ class FileUploadView(APIView):
                     'file_type': file_type,
                     'file_size': file_size,
                     'file_encoding': file_encoding,
-                    'file_modification_time': file_modification_time
+                    'modification_time': file_modification_time
                 })
                 # Creas el diccionario con los datos del archivo
                 file_data = {
@@ -170,7 +170,7 @@ class FileUploadView(APIView):
                     'file_type': file_type,
                     'file_size': file_size,
                     'file_encoding': file_encoding,
-                    'file_modification_time': file_modification_time
+                    'modification_time': file_modification_time
                 }
 
                 # Creas la instancia del serializer con los datos del archivo

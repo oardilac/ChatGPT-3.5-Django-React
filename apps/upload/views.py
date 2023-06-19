@@ -1,4 +1,6 @@
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework import status
 from .models import User, Chatbot, SubmitFiles, RequestModelTexto, Url
@@ -22,8 +24,6 @@ from rest_framework.pagination import PageNumberPagination
 
 
 logger = logging.getLogger(__name__)
-SERVICE_ACCOUNT_KEY_PATH = config('SERVICE_ACCOUNT_KEY_PATH')
-cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
 cred = credentials.ApplicationDefault()
 db = firestore.Client(project='chatmine-388722')
 from google.cloud import storage
@@ -63,7 +63,7 @@ class CreateChatbotView(APIView):
             chatbot_name = serializer.validated_data['chatbot_name']
             state_deployed = serializer.validated_data['state_deployed']
             active_state = serializer.validated_data['active_state']
-
+            
             doc_ref = db.collection('Chatbots').document()
             doc_ref.set({
                 'chatbot_name': chatbot_name,
@@ -132,8 +132,15 @@ class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('user')
         chatbot_id = request.data.get('chatbot')
-        user = User.objects.get(id=user_id)
-        chatbot = Chatbot.objects.get(id=chatbot_id)
+        user = get_object_or_404(User, id=user_id)
+        chatbot = get_object_or_404(Chatbot, id=chatbot_id)
+
+        try:
+            user = User.objects.get(id=user_id)
+            chatbot = Chatbot.objects.get(id=chatbot_id)
+        except ObjectDoesNotExist:
+            return Response({"error": "User or Chatbot not found"}, status=status.HTTP_400_BAD_REQUEST)
+                    
         uploaded_files = request.FILES.getlist('files')
         bucket = client.get_bucket(bucket_name)
 
@@ -169,9 +176,22 @@ class FileUploadView(APIView):
                 # Get the file metadata
                 file_size = blob.size
                 file_encoding = chardet.detect(contents)['encoding'] if file_type in ['csv', 'txt'] else 'binary'
-
+                file_modification_time = blob.updated
+                doc_ref = db.collection('datafile').document()
+                doc_ref.set({
+                    'user': user.id,
+                    'chatbot': chatbot.id,
+                    'filename': file.name,
+                    'location': blob.public_url,
+                    'file_type': file_type,
+                    'file_size': file_size,
+                    'file_encoding': file_encoding,
+                    'file_modification_time': file_modification_time
+                })
                 # Creas el diccionario con los datos del archivo
                 file_data = {
+                    'user': user.id,
+                    'chatbot': chatbot.id,
                     'filename': file.name,
                     'location': blob.public_url,
                     'file_type': file_type,
@@ -233,7 +253,7 @@ class StoreTextoView(APIView):
             character_count = len(lname)
             file_size = blob.size
             file_encoding = 'utf-8'
-            file_modification_time = datetime.now()
+            file_modification_time = blob.updated
 
             doc_ref = db.collection('datafile').document()
             doc_ref.set({
@@ -244,6 +264,7 @@ class StoreTextoView(APIView):
                 'file_type': file_type,
                 'file_size': file_size,
                 'file_encoding': file_encoding,
+                'file_modification_time': file_modification_time,
                 'tokens': total_tokens,
                 'characters': character_count
             })
@@ -285,6 +306,8 @@ class SaveUrlView(APIView):
             blob.upload_from_string(text, content_type='text/plain')
 
             file_size = blob.size
+
+            file_modification_time = blob.updated
             
             doc_ref = db.collection('datafile').document()
             doc_ref.set({
@@ -293,6 +316,7 @@ class SaveUrlView(APIView):
                 'filename': filename,
                 'location': url,
                 'file_size': file_size,
+                'file_modification_time': file_modification_time
             })
 
             return Response({"response": "Archivo guardado con éxito"})

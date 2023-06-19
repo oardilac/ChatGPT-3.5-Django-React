@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Chatbot, SubmitFiles, RequestModelTexto, Url
+from django.core.exceptions import ObjectDoesNotExist
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -9,10 +10,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ChatbotSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True)  # new field for taking user id as input
 
     class Meta:
         model = Chatbot
-        fields = ['user', 'chatbot_name', 'state_deployed', 'active_state']
+        fields = ['user', 'user_id', 'chatbot_name', 'state_deployed', 'active_state']  # include user_id field
+
+    # Overwrite create method
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with given id does not exist.")
+        chatbot = Chatbot.objects.create(user=user, **validated_data)
+        return chatbot
 
 class SubmitFilesSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
